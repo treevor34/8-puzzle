@@ -38,7 +38,6 @@ bool isSame(vector<int> un, vector<int> dos)
 
 int findZero(vector<int> tmp)
 {
-    cout << "Find zero" << endl;
     for(int i = 0; i < 9; i++)
         if(tmp.at(i) == 0)
             return i;
@@ -50,7 +49,6 @@ vector<int> move(vector<int> tmpy, int exp)
 {
     cout << "Move:" << exp << endl;
     vector<int> tmp = tmpy;
-    print(tmp);
     int swapped, num = findZero(tmp);
     vector<int> empty;
     switch(exp) {
@@ -91,7 +89,6 @@ vector<int> move(vector<int> tmpy, int exp)
             //swapped the values
             tmp.at(num + 1) = 0;
             tmp.at(num) = swapped;
-            print(tmp);
             return tmp;
             break;
         case 3://down
@@ -119,9 +116,14 @@ int bfs(vector<int> cur, vector<int> solution)
 
     vector<int> tmp;
 
-    vector<int> confused = move(cur, 2);
-    print(confused);
-    cout << "print right"<< endl;
+    vector<int> left = move(cur, 0);
+    print(left);
+    vector<int> up = move(cur, 1);
+    print(up);
+    vector<int> right = move(cur, 2);
+    print(right);
+    vector<int> down = move(cur, 3);
+    print(down);
     cout<< "confused" << endl;
 
     //myqueue.push();
@@ -163,7 +165,6 @@ int main()
     print(solution);
      
     cout << "Start bfs" << endl;
-    
-    //int answer = bfs(start, solution);
+    int answer = bfs(start, solution);
     return 0;
 }

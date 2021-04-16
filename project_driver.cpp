@@ -110,21 +110,38 @@ vector<int> move(vector<int> tmpy, int exp)
 }
 int bfs(vector<int> cur, vector<int> solution)
 {
-    int ret = -1;
+    int ret = -2;
 
     queue<vector<int>> myqueue;
 
-    vector<int> tmp;
-
-    vector<int> left = move(cur, 0);
-    print(left);
-    vector<int> up = move(cur, 1);
-    print(up);
-    vector<int> right = move(cur, 2);
-    print(right);
-    vector<int> down = move(cur, 3);
-    print(down);
-    cout<< "confused" << endl;
+    vector<int> tmp = cur;
+    myqueue.push(tmp);
+    //this while loop is the brute force bfs
+    //needs many checks in it though
+    while(!myqueue.empty() && ret < 0)
+    {
+        vector<int> top = myqueue.front();
+        myqueue.pop();
+        vector<int> left = move(top, 0);
+        print(left);
+        vector<int> up = move(top, 1);
+        print(up);
+        vector<int> right = move(top, 2);
+        print(right);
+        vector<int> down = move(top, 3);
+        print(down);
+        cout<< "confused" << endl;
+        if(!left.empty())
+            myqueue.push(left);
+        if(!up.empty())
+            myqueue.push(up);
+        if(!right.empty())
+            myqueue.push(right);
+        if(!down.empty())
+            myqueue.push(down);
+            
+        ret++;
+    }
 
     //myqueue.push();
     /*while(!myqueue.empty() && ret == -1)

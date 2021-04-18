@@ -1,19 +1,16 @@
+/*---------------------------------------------------------------------
+Test cases given on worksheet do not seem to work.
+Any test case with a height greater than 12 will likely take some time.
+Has been thouroughly tested working up to 16 steps (for bfs)
+---------------------------------------------------------------------*/
 #include <vector>
 #include <queue>
 #include <iostream>
 #include <sstream>
 using namespace std;
-//#include "class_node.h"
-/*
-struct node {
-    vector<int> puzzle;
-    node* left;
-    node* up;
-    node* right;
-    node* down;
-    node* parent; 
-};
-*/
+#include "class_node.h"
+
+//prints the vector out
 void print(vector<int> vec)
 {
     for(int i = 0; i < vec.size(); i++)
@@ -24,6 +21,8 @@ void print(vector<int> vec)
     }
 }
 
+//returns true if both vectors are the same
+//returns false if not
 bool isSame(vector<int> un, vector<int> dos)
 {
     for(int i = 0; i < 9; i++)
@@ -36,6 +35,7 @@ bool isSame(vector<int> un, vector<int> dos)
     return true;
 }
 
+//returns the index location for the "0"
 int findZero(vector<int> tmp)
 {
     for(int i = 0; i < 9; i++)
@@ -45,15 +45,15 @@ int findZero(vector<int> tmp)
     exit(0);
 }
 
+//returns a vector of the move specified with the 0
+//returns empty if it cannot make that move
 vector<int> move(vector<int> tmpy, int exp)
 {
-    cout << "Move:" << exp << endl;
     vector<int> tmp = tmpy;
     int swapped, num = findZero(tmp);
     vector<int> empty;
     switch(exp) {
         case 0: //left
-            cout << "left" << endl;
             if(num == 0 || num == 3 || num == 6)
                 return empty;
             
@@ -66,10 +66,8 @@ vector<int> move(vector<int> tmpy, int exp)
             return tmp;
             break;
         case 1: //up
-            cout << "up" << endl;
             if(num == 0 || num == 1 || num == 2)
                 return empty;
-            cout << "past the up" << endl;
             //records the value being swapped left with
             swapped = tmp.at(num - 3);
 
@@ -79,7 +77,6 @@ vector<int> move(vector<int> tmpy, int exp)
             return tmp;
             break;
         case 2: //right
-            cout << "right" << endl;
             if(num == 2 || num == 5 || num == 8)
                 return empty;
             
@@ -92,7 +89,6 @@ vector<int> move(vector<int> tmpy, int exp)
             return tmp;
             break;
         case 3://down
-            cout << "down" << endl;
             if(num == 6 || num == 7 || num == 8)
                 return empty;
             
@@ -108,50 +104,112 @@ vector<int> move(vector<int> tmpy, int exp)
     cout << "This is wrong lol" << endl;
     return tmp;
 }
+
+//does bfs search. Has two queues, one with the vectors to find the correct iteration
+//the other vector of nodes so it can climb back up to find the height(# of steps)
 int bfs(vector<int> cur, vector<int> solution)
 {
     int ret = -2;
 
+    BigTree tree;
     queue<vector<int>> myqueue;
+    queue<node*> tracking;
+    int counter = 1;
+    node *rooty = tree.insert();
+    tracking.push(rooty);
 
     vector<int> tmp = cur;
     myqueue.push(tmp);
+
     //this while loop is the brute force bfs
-    //needs many checks in it though
     while(!myqueue.empty() && ret < 0)
     {
+        //queues storing vectors and tracking nodes
         vector<int> top = myqueue.front();
         myqueue.pop();
+        
+        node *cur = tracking.front();
+        tracking.pop();
+
+        //the four vectors to hold the possible movements
         vector<int> left = move(top, 0);
-        print(left);
         vector<int> up = move(top, 1);
-        print(up);
         vector<int> right = move(top, 2);
-        print(right);
         vector<int> down = move(top, 3);
-        print(down);
-        cout<< "confused" << endl;
+
+        //if the move vector empty, then it cannot move
         if(!left.empty())
-            myqueue.push(left);
+        {
+            if(isSame(top, left) == false)
+            {
+                counter++;
+                node *tmp = tree.insertLeft(cur, counter);
+                tracking.push(tmp);
+                if(isSame(solution, left) == true)
+                {
+                    //print(left);
+                    ret = tree.height(tmp);
+                    return ret;
+                }
+                myqueue.push(left);
+            }
+        }
         if(!up.empty())
-            myqueue.push(up);
+        {
+            if(isSame(top, up) == false)
+            {
+                counter++;
+                node *tmp = tree.insertUp(cur, counter);
+                tracking.push(tmp);
+                if(isSame(solution, up) == true)
+                {
+                    //print(up);
+                    ret = tree.height(tmp);
+                    return ret;
+                }
+                myqueue.push(up);
+            }
+        }
         if(!right.empty())
-            myqueue.push(right);
+        {
+            if(isSame(top, right) == false)
+            {
+                counter++;
+                node *tmp = tree.insertRight(cur, counter);
+                tracking.push(tmp);
+                if(isSame(solution, right) == true)
+                {
+                    //print(right);
+                    ret = tree.height(tmp);
+                    return ret;
+                }
+                myqueue.push(right);
+            }
+        }
         if(!down.empty())
-            myqueue.push(down);
-            
-        ret++;
+        {
+            if(isSame(top, down) == false)
+            {
+                counter++;
+                node *tmp = tree.insertDown(cur, counter);
+                tracking.push(tmp);
+                if(isSame(solution, down) == true)
+                {
+                    //print(down);
+                    ret = tree.height(tmp);
+                    return ret;
+                }
+                myqueue.push(down);
+            }
+        }    
     }
-
-    //myqueue.push();
-    /*while(!myqueue.empty() && ret == -1)
-    {
-    }*/
-
-
     return ret;
 }
 
+/*int dfs(vector<int> start, vector<int> solution)
+{
+
+}*/
 
 int main()
 {
@@ -166,6 +224,11 @@ int main()
     {
         cout << "Start value #"<< z+1 << ": ";
         cin >> tmp;
+        if(tmp < 0 || tmp > 8)
+        {
+            cout << "Value must be between 0 and 8." << endl;
+            return 0;
+        }
         start.push_back(tmp);
     }
 
@@ -173,6 +236,11 @@ int main()
     {
         cout << "Solution value #"<< z+1 << ": ";
         cin >> tmp;
+        if(tmp < 0 || tmp > 8)
+        {
+            cout << "Value must be between 0 and 8." << endl;
+            return 0;
+        }
         solution.push_back(tmp);
     }
 
@@ -180,8 +248,32 @@ int main()
     print(start);
     cout << endl << "Solution State: "<< endl;
     print(solution);
+    cout << endl;
+
+    if(isSame(start, solution) == true)
+    {
+        cout << "Start state and solution are already the same." << endl;
+        return 0;
+    }
+
+    int check = 0;
+    for(int j = 0; j < start.size(); j++)
+    {
+        for(int t = 0; t < solution.size(); t++)
+        {
+            if(start.at(j) != solution.at(t))
+                check++;
+        }
+        if(check > 8)
+        {
+            cout << "A solution is impossible." << endl;
+            return 0;
+        }
+        check = 0;
+    }
      
-    cout << "Start bfs" << endl;
+    //cout << "Start bfs" << endl;
     int answer = bfs(start, solution);
+    cout << "Total steps needed: " << answer << endl;
     return 0;
 }

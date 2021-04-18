@@ -5,6 +5,7 @@ Has been thouroughly tested working up to 16 steps (for bfs)
 ---------------------------------------------------------------------*/
 #include <vector>
 #include <queue>
+#include <stack>
 #include <iostream>
 #include <sstream>
 using namespace std;
@@ -206,10 +207,116 @@ int bfs(vector<int> cur, vector<int> solution)
     return ret;
 }
 
-/*int dfs(vector<int> start, vector<int> solution)
+int dfs(vector<int> start, vector<int> solution)
 {
+    int ret = 347;
 
-}*/
+    BigTree tree;
+
+    stack<vector<int>> mystack;
+    stack<node*> tracking;
+
+    int counter = 1;
+    node *rooty = tree.insert();
+    tracking.push(rooty);
+
+    vector<int> tmp = start;
+    mystack.push(tmp);
+
+    while(!mystack.empty())
+    {
+
+        vector<int> top = mystack.top();
+        mystack.pop();
+        
+        node *cur = tracking.top();
+        tracking.pop();
+        int pp = tree.height(cur);
+        
+        if(pp < 20 && pp < ret)
+        {
+            vector<int> left = move(top, 0);
+            vector<int> up = move(top, 1);
+            vector<int> right = move(top, 2);
+            vector<int> down = move(top, 3);
+            if(!left.empty())
+            {
+                if(isSame(top, left) == false)
+                {
+                    counter++;
+                    node *tmp = tree.insertLeft(cur, counter);
+                    tracking.push(tmp);
+                    if(isSame(solution, left) == true)
+                    {
+                        //print(left);
+                        if(tree.height(tmp) < ret)
+                            ret = tree.height(tmp);
+                        cout << ret << endl;
+                        //return ret;
+                    }
+                    mystack.push(left);
+                }
+            }
+            if(!up.empty())
+            {
+                if(isSame(top, up) == false)
+                {
+                    counter++;
+                    node *tmp = tree.insertUp(cur, counter);
+                    tracking.push(tmp);
+                    if(isSame(solution, up) == true)
+                    {
+                        //print(up);
+                        if(tree.height(tmp) < ret)
+                            ret = tree.height(tmp);
+                        cout << ret << endl;
+                        //return ret;
+                    }
+                    mystack.push(up);
+                }
+            }
+            if(!right.empty())
+            {
+                if(isSame(top, right) == false)
+                {
+                    counter++;
+                    node *tmp = tree.insertRight(cur, counter);
+                    tracking.push(tmp);
+                    if(isSame(solution, right) == true)
+                    {
+                        //print(right);
+                        if(tree.height(tmp) < ret)
+                            ret = tree.height(tmp);
+                        cout << ret << endl;
+                        //return ret;
+                    }
+                    mystack.push(right);
+                }
+            }
+            if(!down.empty())
+            {
+                if(isSame(top, down) == false)
+                {
+                    counter++;
+                    node *tmp = tree.insertDown(cur, counter);
+                    tracking.push(tmp);
+                    if(isSame(solution, down) == true)
+                    {
+                        //print(down);
+                        if(tree.height(tmp) < ret)
+                            ret = tree.height(tmp);
+                        cout << ret << endl;
+                        //return ret;
+                    }
+                    mystack.push(down);
+                }
+            }
+        }    
+    }
+    return ret;
+}
+
+
 
 int main()
 {
@@ -273,7 +380,7 @@ int main()
     }
      
     //cout << "Start bfs" << endl;
-    int answer = bfs(start, solution);
+    int answer = dfs(start, solution);
     cout << "Total steps needed: " << answer << endl;
     return 0;
 }

@@ -8,17 +8,22 @@ Has been thouroughly tested working up to 16 steps (for bfs)
 #include <stack>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 using namespace std;
 #include "class_node.h"
 
 //prints the vector out
 void print(vector<int> vec)
 {
-    for(int i = 0; i < vec.size(); i++)
+    int n = vec.size()/3;
+    for (int i = 0; i < 3; i++)
     {
-        cout << vec.at(i) << " ";
-        if((i+1) % 3 == 0)
-            cout << endl;
+        cout << "\t";
+        for (int j = 0; j < 3; j++)
+        {
+            cout << vec.at(i*n+j) << " ";
+        }
+        cout << endl;
     }
 }
 
@@ -57,7 +62,7 @@ vector<int> move(vector<int> tmpy, int exp)
         case 0: //left
             if(num == 0 || num == 3 || num == 6)
                 return empty;
-            
+
             //records the value being swapped left with
             swapped = tmp.at(num - 1);
 
@@ -80,7 +85,7 @@ vector<int> move(vector<int> tmpy, int exp)
         case 2: //right
             if(num == 2 || num == 5 || num == 8)
                 return empty;
-            
+
             //records the value being swapped left with
             swapped = tmp.at(num + 1);
 
@@ -92,7 +97,7 @@ vector<int> move(vector<int> tmpy, int exp)
         case 3://down
             if(num == 6 || num == 7 || num == 8)
                 return empty;
-            
+
             //records the value being swapped left with
             swapped = tmp.at(num + 3);
 
@@ -121,6 +126,9 @@ int bfs(vector<int> start, vector<int> solution)
     //this while loop is the brute force bfs
     while(!tracking.empty() && ret < 0)
     {
+        //queues storing vectors and tracking nodes
+        vector<int> top = myqueue.front();
+        myqueue.pop();
         node *cur = tracking.front();
         tracking.pop();
         
@@ -191,7 +199,7 @@ int bfs(vector<int> start, vector<int> solution)
                     return ret;
                 }
             }
-        }    
+        }
     }
     return ret;
 }
@@ -207,12 +215,24 @@ int dfs(vector<int> start, vector<int> solution)
     node *rooty = tree.insert(start);
     tracking.push(rooty);
 
+    vector<int> tmp = start;
+    mystack.push(tmp);
+
+    while(!mystack.empty())
+    {
+
+        vector<int> top = mystack.top();
+        mystack.pop();
+
     while(!tracking.empty())
     {        
         node *cur = tracking.top();
         tracking.pop();
         vector<int> top = cur->puzzle;
         int pp = tree.height(cur);
+
+
+        if(pp < 20 && pp < ret)
 
         //to check parent's
         vector<int> prev;
@@ -222,6 +242,7 @@ int dfs(vector<int> start, vector<int> solution)
             prev = top;
 
         if(pp < 40 && pp < ret)
+
         {
             vector<int> left = move(top, 0);
             vector<int> up = move(top, 1);
@@ -238,6 +259,9 @@ int dfs(vector<int> start, vector<int> solution)
                     {
                         if(tree.height(tmp) < ret)
                             ret = tree.height(tmp);
+
+                        //return ret;
+
                     }
                 }
             }
@@ -251,6 +275,9 @@ int dfs(vector<int> start, vector<int> solution)
                     {
                         if(tree.height(tmp) < ret)
                             ret = tree.height(tmp);
+
+                        //return ret;
+
                     }
                 }
             }
@@ -264,6 +291,10 @@ int dfs(vector<int> start, vector<int> solution)
                     {
                         if(tree.height(tmp) < ret)
                             ret = tree.height(tmp);
+
+                        //return ret;
+
+
                     }
                 }
             }
@@ -277,10 +308,13 @@ int dfs(vector<int> start, vector<int> solution)
                     {
                         if(tree.height(tmp) < ret)
                             ret = tree.height(tmp);
+
+                        //return ret;
+
                     }
                 }
             }
-        }    
+        }
     }
     return ret;
 }
@@ -289,20 +323,18 @@ int dfs(vector<int> start, vector<int> solution)
 
 int main()
 {
-    string input;
+    ifstream inFile;
     vector<int> solution;
     vector<int> start;
-    int z, tmp;
-    //should check for repeats but i have not yet
-    cout << "Values must range from 0-8, with only one occurence of each." << endl << "Please enter 9 seperate values for the puzzle start state:" << endl;
-    
+    int z, tmp, selection = 0;
+
+    inFile.open("input.txt");
     for(z = 0; z < 9; z++)
     {
-        cout << "Start value #"<< z+1 << ": ";
-        cin >> tmp;
+        inFile >> tmp;
         if(tmp < 0 || tmp > 8)
         {
-            cout << "Value must be between 0 and 8." << endl;
+            cout << "Value must be between 0 and 8. Value entered: " << tmp << endl;
             return 0;
         }
         start.push_back(tmp);
@@ -310,27 +342,37 @@ int main()
 
     for(z = 0; z < 9; z++)
     {
-        cout << "Solution value #"<< z+1 << ": ";
-        cin >> tmp;
+        inFile >> tmp;
         if(tmp < 0 || tmp > 8)
         {
-            cout << "Value must be between 0 and 8." << endl;
+            cout << "Value must be between 0 and 8. Value entered: " << tmp << endl;
             return 0;
         }
         solution.push_back(tmp);
     }
+    inFile.close();
 
-    cout << endl << "Starting State: "<< endl;
+    cout << endl << "*/*/*/*/*/*/*/*/*/*/*";
+    cout << endl << "   Starting State"<< endl;
     print(start);
-    cout << endl << "Solution State: "<< endl;
+    cout << endl << "   Solution State"<< endl;
     print(solution);
-    cout << endl;
+    cout << "*/*/*/*/*/*/*/*/*/*/*" << endl << endl;
 
-    if(isSame(start, solution) == true)
+    if(isSame(start, solution))
     {
         cout << "Start state and solution are already the same." << endl;
         return 0;
     }
+
+    while (selection > 2 || selection < 1)
+    {
+        cout << "Which Search Algorithm?\n1. Breadth First Search\n2. Depth First Search\n\nSelection: ";
+        cin >> selection;
+        if (selection > 2 || selection < 1)
+            cout << "\nIncorrect Selection Choice" << endl;
+    }
+
 
     int check = 0;
     for(int j = 0; j < start.size(); j++)
@@ -347,9 +389,10 @@ int main()
         }
         check = 0;
     }
-     
-    //cout << "Start bfs" << endl;
-    int answer = dfs(start, solution);
-    cout << "Total steps needed: " << answer << endl;
+
+    if (selection == 1)
+        cout << "\nBreadth First-\n" << "\tSolutions needed: " << bfs(start, solution) << endl;
+    if (selection == 2)
+        cout << "\nDepth First-\n" << "\tSolutions needed: " << dfs(start, solution) << endl << endl;
     return 0;
 }

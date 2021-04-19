@@ -360,76 +360,8 @@ int main()
     }
 
     if (selection == 1)
-        cout << "\nBreadth First-\n" << "\tSolutions needed: " << bfs(start, solution) << endl;
+        cout << "\nBreadth First-\n" << "\tMoves Needed: " << bfs(start, solution) << endl;
     if (selection == 2)
-        cout << "\nDepth First-\n" << "\tSolutions needed: " << dfs(start, solution) << endl << endl;
+        cout << "\nDepth First-\n" << "\tMoves needed: " << dfs(start, solution) << endl << endl;
     return 0;
 }
-/*
-int main()
-{
-    string input;
-    vector<int> solution;
-    vector<int> start;
-    int z, tmp;
-    //should check for repeats but i have not yet
-    cout << "Values must range from 0-8, with only one occurence of each." << endl << "Please enter 9 seperate values for the puzzle start state:" << endl;
-
-    for(z = 0; z < 9; z++)
-    {
-        cout << "Start value #"<< z+1 << ": ";
-        cin >> tmp;
-        if(tmp < 0 || tmp > 8)
-        {
-            cout << "Value must be between 0 and 8." << endl;
-            return 0;
-        }
-        start.push_back(tmp);
-    }
-
-    for(z = 0; z < 9; z++)
-    {
-        cout << "Solution value #"<< z+1 << ": ";
-        cin >> tmp;
-        if(tmp < 0 || tmp > 8)
-        {
-            cout << "Value must be between 0 and 8." << endl;
-            return 0;
-        }
-        solution.push_back(tmp);
-    }
-
-    cout << endl << "Starting State: "<< endl;
-    print(start);
-    cout << endl << "Solution State: "<< endl;
-    print(solution);
-    cout << endl;
-
-    if(isSame(start, solution) == true)
-    {
-        cout << "Start state and solution are already the same." << endl;
-        return 0;
-    }
-
-    int check = 0;
-    for(int j = 0; j < start.size(); j++)
-    {
-        for(int t = 0; t < solution.size(); t++)
-        {
-            if(start.at(j) != solution.at(t))
-                check++;
-        }
-        if(check > 8)
-        {
-            cout << "A solution is impossible." << endl;
-            return 0;
-        }
-        check = 0;
-    }
-
-    //cout << "Start bfs" << endl;
-    int answer = dfs(start, solution);
-    cout << "Total steps needed: " << answer << endl;
-    return 0;
-}
-*/

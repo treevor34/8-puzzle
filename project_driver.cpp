@@ -15,11 +15,15 @@ using namespace std;
 //prints the vector out
 void print(vector<int> vec)
 {
-    for(int i = 0; i < vec.size(); i++)
+    int n = vec.size()/3;
+    for (int i = 0; i < 3; i++)
     {
-        cout << vec.at(i) << " ";
-        if((i+1) % 3 == 0)
-            cout << endl;
+        cout << "\t";
+        for (int j = 0; j < 3; j++)
+        {
+            cout << vec.at(i*n+j) << " ";
+        }
+        cout << endl;
     }
 }
 
@@ -58,7 +62,7 @@ vector<int> move(vector<int> tmpy, int exp)
         case 0: //left
             if(num == 0 || num == 3 || num == 6)
                 return empty;
-            
+
             //records the value being swapped left with
             swapped = tmp.at(num - 1);
 
@@ -81,7 +85,7 @@ vector<int> move(vector<int> tmpy, int exp)
         case 2: //right
             if(num == 2 || num == 5 || num == 8)
                 return empty;
-            
+
             //records the value being swapped left with
             swapped = tmp.at(num + 1);
 
@@ -93,7 +97,7 @@ vector<int> move(vector<int> tmpy, int exp)
         case 3://down
             if(num == 6 || num == 7 || num == 8)
                 return empty;
-            
+
             //records the value being swapped left with
             swapped = tmp.at(num + 3);
 
@@ -124,7 +128,7 @@ int bfs(vector<int> start, vector<int> solution)
     {
         node *cur = tracking.front();
         tracking.pop();
-        
+
         vector<int> top = cur->puzzle;
 
         //the four vectors to hold the possible movements
@@ -192,7 +196,7 @@ int bfs(vector<int> start, vector<int> solution)
                     return ret;
                 }
             }
-        }    
+        }
     }
     return ret;
 }
@@ -209,7 +213,7 @@ int dfs(vector<int> start, vector<int> solution)
     tracking.push(rooty);
 
     while(!tracking.empty())
-    {        
+    {
         node *cur = tracking.top();
         tracking.pop();
         vector<int> top = cur->puzzle;
@@ -234,7 +238,7 @@ int dfs(vector<int> start, vector<int> solution)
                 {
                     node *tmp = tree.insertLeft(cur, left);
                     tracking.push(tmp);
-                    
+
                     if(isSame(solution, left) == true)
                     {
                         if(tree.height(tmp) < ret)
@@ -281,7 +285,7 @@ int dfs(vector<int> start, vector<int> solution)
                     }
                 }
             }
-        }    
+        }
     }
     return ret;
 }
@@ -370,7 +374,7 @@ int main()
     int z, tmp;
     //should check for repeats but i have not yet
     cout << "Values must range from 0-8, with only one occurence of each." << endl << "Please enter 9 seperate values for the puzzle start state:" << endl;
-    
+
     for(z = 0; z < 9; z++)
     {
         cout << "Start value #"<< z+1 << ": ";
@@ -422,7 +426,7 @@ int main()
         }
         check = 0;
     }
-     
+
     //cout << "Start bfs" << endl;
     int answer = dfs(start, solution);
     cout << "Total steps needed: " << answer << endl;

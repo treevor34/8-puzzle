@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------
 Test cases given on worksheet do not seem to work.
-Any test case with a height greater than 12 will likely take some time.
-Has been thouroughly tested working up to 16 steps (for bfs)
+Any test case with a height greater than 20 will likely take some time.
+Has been thouroughly tested working up to 22 steps
 ---------------------------------------------------------------------*/
 #include <vector>
 #include <queue>
@@ -116,13 +116,11 @@ vector<int> move(vector<int> tmpy, int exp)
 int bfs(vector<int> start, vector<int> solution)
 {
     int ret = -2;
-
     BigTree tree;
     queue<node*> tracking;
     node *rooty = tree.insert(start);
 
     tracking.push(rooty);
-
     //this while loop is the brute force bfs
     while(!tracking.empty() && ret < 0)
     {
@@ -204,14 +202,12 @@ int bfs(vector<int> start, vector<int> solution)
 int dfs(vector<int> start, vector<int> solution)
 {
     int ret = 347;
-
     BigTree tree;
-
     stack<node*> tracking;
-
     node *rooty = tree.insert(start);
-    tracking.push(rooty);
 
+    //main loop of algorithm
+    tracking.push(rooty);
     while(!tracking.empty())
     {
         node *cur = tracking.top();
@@ -226,12 +222,16 @@ int dfs(vector<int> start, vector<int> solution)
         else
             prev = top;
 
+        //handling escape parameters
         if(pp < 40 && pp < ret)
         {
+            //performing the "moves"
             vector<int> left = move(top, 0);
             vector<int> up = move(top, 1);
             vector<int> right = move(top, 2);
             vector<int> down = move(top, 3);
+
+            //checks if the move is the same as the solution and if so update the shortest path for each direction
             if(!left.empty() && (isSame(prev, left) == 0))
             {
                 if(isSame(top, left) == false)
@@ -297,6 +297,7 @@ int main()
     vector<int> start;
     int z, tmp, selection = 0;
 
+    //opening and reading the input file
     inFile.open("input.txt");
     for(z = 0; z < 9; z++)
     {
@@ -308,7 +309,6 @@ int main()
         }
         start.push_back(tmp);
     }
-
     for(z = 0; z < 9; z++)
     {
         inFile >> tmp;
@@ -321,19 +321,18 @@ int main()
     }
     inFile.close();
 
+    //output formatting
     cout << endl << "*/*/*/*/*/*/*/*/*/*/*";
     cout << endl << "   Starting State"<< endl;
     print(start);
     cout << endl << "   Solution State"<< endl;
     print(solution);
     cout << "*/*/*/*/*/*/*/*/*/*/*" << endl << endl;
-
     if(isSame(start, solution))
     {
         cout << "Start state and solution are already the same." << endl;
         return 0;
     }
-
     while (selection > 2 || selection < 1)
     {
         cout << "Which Search Algorithm?\n1. Breadth First Search\n2. Depth First Search\n\nSelection: ";
@@ -343,6 +342,7 @@ int main()
     }
 
 
+    //checking the input for validity
     int check = 0;
     for(int j = 0; j < start.size(); j++)
     {
@@ -359,6 +359,7 @@ int main()
         check = 0;
     }
 
+    //runs algorithms
     if (selection == 1)
         cout << "\nBreadth First-\n" << "\tMoves Needed: " << bfs(start, solution) << endl;
     if (selection == 2)

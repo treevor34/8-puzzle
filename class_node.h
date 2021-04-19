@@ -7,7 +7,7 @@ using namespace std;
 
 //node
 struct node {
-    //vector<int> puzzle;
+    vector<int> puzzle;
     int val;
     node *left;
     node *up;
@@ -21,17 +21,15 @@ class BigTree
 {
 private:
     node *root;
-
-    //search function
 public:
     BigTree();
     //~BigTree();
-    node* insert();
+    node* insert(vector<int> val);
     //these return the new nodes created from directions in the puzzle, so they can be put in queue
-    node* insertLeft(node *papi, int value);
-    node* insertRight(node *papi, int value);
-    node* insertUp(node *papi, int value);
-    node* insertDown(node *papi, int value);
+    node* insertLeft(node *papi, vector<int> val);
+    node* insertRight(node *papi, vector<int> val);
+    node* insertUp(node *papi, vector<int> val);
+    node* insertDown(node *papi, vector<int> val);
     int height(node *nood);
 };
 

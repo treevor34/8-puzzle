@@ -113,29 +113,26 @@ vector<int> move(vector<int> tmpy, int exp)
 
 //does bfs search. Has two queues, one with the vectors to find the correct iteration
 //the other vector of nodes so it can climb back up to find the height(# of steps)
-int bfs(vector<int> cur, vector<int> solution)
+int bfs(vector<int> start, vector<int> solution)
 {
     int ret = -2;
 
     BigTree tree;
-    queue<vector<int>> myqueue;
     queue<node*> tracking;
-    int counter = 1;
-    node *rooty = tree.insert();
+    node *rooty = tree.insert(start);
+
     tracking.push(rooty);
 
-    vector<int> tmp = cur;
-    myqueue.push(tmp);
-
     //this while loop is the brute force bfs
-    while(!myqueue.empty() && ret < 0)
+    while(!tracking.empty() && ret < 0)
     {
         //queues storing vectors and tracking nodes
         vector<int> top = myqueue.front();
         myqueue.pop();
-
         node *cur = tracking.front();
         tracking.pop();
+        
+        vector<int> top = cur->puzzle;
 
         //the four vectors to hold the possible movements
         vector<int> left = move(top, 0);
@@ -143,69 +140,64 @@ int bfs(vector<int> cur, vector<int> solution)
         vector<int> right = move(top, 2);
         vector<int> down = move(top, 3);
 
+        //to check parent's
+        vector<int> prev;
+        if(cur->parent != NULL)
+            prev = cur->parent->puzzle;
+        else
+            prev = top;
+
         //if the move vector empty, then it cannot move
-        if(!left.empty())
+        if(!left.empty() && (isSame(prev, left) == 0))
         {
             if(isSame(top, left) == false)
             {
-                counter++;
-                node *tmp = tree.insertLeft(cur, counter);
+                node *tmp = tree.insertLeft(cur, left);
                 tracking.push(tmp);
                 if(isSame(solution, left) == true)
                 {
-                    //print(left);
                     ret = tree.height(tmp);
                     return ret;
                 }
-                myqueue.push(left);
             }
         }
-        if(!up.empty())
+        if(!up.empty() && (isSame(prev, up) == 0))
         {
             if(isSame(top, up) == false)
             {
-                counter++;
-                node *tmp = tree.insertUp(cur, counter);
+                node *tmp = tree.insertUp(cur, up);
                 tracking.push(tmp);
                 if(isSame(solution, up) == true)
                 {
-                    //print(up);
                     ret = tree.height(tmp);
                     return ret;
                 }
-                myqueue.push(up);
             }
         }
-        if(!right.empty())
+        if(!right.empty() && (isSame(prev, right) == 0))
         {
             if(isSame(top, right) == false)
             {
-                counter++;
-                node *tmp = tree.insertRight(cur, counter);
+                node *tmp = tree.insertRight(cur, right);
                 tracking.push(tmp);
                 if(isSame(solution, right) == true)
                 {
-                    //print(right);
                     ret = tree.height(tmp);
                     return ret;
                 }
-                myqueue.push(right);
             }
         }
-        if(!down.empty())
+        if(!down.empty() && (isSame(prev, down) == 0))
         {
             if(isSame(top, down) == false)
             {
-                counter++;
-                node *tmp = tree.insertDown(cur, counter);
+                node *tmp = tree.insertDown(cur, down);
                 tracking.push(tmp);
                 if(isSame(solution, down) == true)
                 {
-                    //print(down);
                     ret = tree.height(tmp);
                     return ret;
                 }
-                myqueue.push(down);
             }
         }
     }
@@ -218,11 +210,9 @@ int dfs(vector<int> start, vector<int> solution)
 
     BigTree tree;
 
-    stack<vector<int>> mystack;
     stack<node*> tracking;
 
-    int counter = 1;
-    node *rooty = tree.insert();
+    node *rooty = tree.insert(start);
     tracking.push(rooty);
 
     vector<int> tmp = start;
@@ -234,82 +224,94 @@ int dfs(vector<int> start, vector<int> solution)
         vector<int> top = mystack.top();
         mystack.pop();
 
+    while(!tracking.empty())
+    {        
         node *cur = tracking.top();
         tracking.pop();
+        vector<int> top = cur->puzzle;
         int pp = tree.height(cur);
 
+
         if(pp < 20 && pp < ret)
+
+        //to check parent's
+        vector<int> prev;
+        if(cur->parent != NULL)
+            prev = cur->parent->puzzle;
+        else
+            prev = top;
+
+        if(pp < 40 && pp < ret)
+
         {
             vector<int> left = move(top, 0);
             vector<int> up = move(top, 1);
             vector<int> right = move(top, 2);
             vector<int> down = move(top, 3);
-            if(!left.empty())
+            if(!left.empty() && (isSame(prev, left) == 0))
             {
                 if(isSame(top, left) == false)
                 {
-                    counter++;
-                    node *tmp = tree.insertLeft(cur, counter);
+                    node *tmp = tree.insertLeft(cur, left);
                     tracking.push(tmp);
+                    
                     if(isSame(solution, left) == true)
                     {
-                        //print(left);
                         if(tree.height(tmp) < ret)
                             ret = tree.height(tmp);
+
                         //return ret;
+
                     }
-                    mystack.push(left);
                 }
             }
-            if(!up.empty())
+            if(!up.empty() && (isSame(prev, up) == 0))
             {
                 if(isSame(top, up) == false)
                 {
-                    counter++;
-                    node *tmp = tree.insertUp(cur, counter);
+                    node *tmp = tree.insertUp(cur, up);
                     tracking.push(tmp);
                     if(isSame(solution, up) == true)
                     {
-                        //print(up);
                         if(tree.height(tmp) < ret)
                             ret = tree.height(tmp);
+
                         //return ret;
+
                     }
-                    mystack.push(up);
                 }
             }
-            if(!right.empty())
+            if(!right.empty() && (isSame(prev, right) == 0))
             {
                 if(isSame(top, right) == false)
                 {
-                    counter++;
-                    node *tmp = tree.insertRight(cur, counter);
+                    node *tmp = tree.insertRight(cur, right);
                     tracking.push(tmp);
                     if(isSame(solution, right) == true)
                     {
-                        //print(right);
                         if(tree.height(tmp) < ret)
                             ret = tree.height(tmp);
+
                         //return ret;
+
+
                     }
-                    mystack.push(right);
                 }
             }
-            if(!down.empty())
+            if(!down.empty() && (isSame(prev, down) == 0))
             {
                 if(isSame(top, down) == false)
                 {
-                    counter++;
-                    node *tmp = tree.insertDown(cur, counter);
+                    node *tmp = tree.insertDown(cur, down);
                     tracking.push(tmp);
                     if(isSame(solution, down) == true)
                     {
-                        //print(down);
                         if(tree.height(tmp) < ret)
                             ret = tree.height(tmp);
+
                         //return ret;
+
                     }
-                    mystack.push(down);
                 }
             }
         }

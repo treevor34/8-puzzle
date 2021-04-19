@@ -6,10 +6,10 @@ BigTree::BigTree()
 {
     root = NULL;
 }
-
-node* BigTree::insertLeft(node *papi, int value)
+node* BigTree::insertLeft(node *papi, vector<int> val)
 {
     papi->left = new node;
+    papi->left->puzzle = val;
     papi->left->parent = papi;
     papi->left->left = NULL;
     papi->left->right = NULL;
@@ -17,9 +17,10 @@ node* BigTree::insertLeft(node *papi, int value)
     papi->left->down = NULL;
     return papi->left;
 }
-node* BigTree::insertRight(node *papi, int value)
+node* BigTree::insertRight(node *papi, vector<int> val)
 {
     papi->right = new node;
+    papi->right->puzzle = val;
     papi->right->parent = papi;
     papi->right->left = NULL;
     papi->right->right = NULL;
@@ -27,9 +28,10 @@ node* BigTree::insertRight(node *papi, int value)
     papi->right->down = NULL;
     return papi->right;
 }
-node* BigTree::insertUp(node *papi, int value)
+node* BigTree::insertUp(node *papi, vector<int> val)
 {
     papi->up = new node;
+    papi->up->puzzle = val;
     papi->up->parent = papi;
     papi->up->left = NULL;
     papi->up->right = NULL;
@@ -37,9 +39,10 @@ node* BigTree::insertUp(node *papi, int value)
     papi->up->down = NULL;
     return papi->up;
 }
-node* BigTree::insertDown(node *papi, int value)
+node* BigTree::insertDown(node *papi, vector<int> val)
 {
     papi->down = new node;
+    papi->down->puzzle = val;
     papi->down->parent = papi;
     papi->down->left = NULL;
     papi->down->right = NULL;
@@ -48,9 +51,10 @@ node* BigTree::insertDown(node *papi, int value)
     return papi->down;
 }
 //for initializing the tree
-node* BigTree::insert()
+node* BigTree::insert(vector<int> val)
 {
     root = new node;
+    root->puzzle = val;
     root->left = NULL;
     root->right = NULL;
     root->up = NULL;
